@@ -1,0 +1,24 @@
+# Manifest del consumidor. Contrato e inventario a la vez (ARCHITECTURE.md §2.1).
+week: 10
+name: content-ray
+core_version: 0.10.0
+
+reused_modules:
+  - llm-client
+  - schema-validate
+  - test-kit
+  - ci-pack
+  - secure-base
+  - cache-ratelimit
+  - parser-io
+
+new_surface:
+  - "escáner de corpus: normaliza archivos reales con parser-io (secciones/tablas con línea) y lo resume con LLM"
+  - "ventana por sección (sample archivo:línea) para ventanas de prompt sobre el ParsedDocument"
+  - "sanitizado del contenido externo con secure-base antes de que cruce al proveedor"
+  - "caché con TTL por archivo sobre el proveedor (el mismo archivo no re-relee el mismo día)"
+
+estimated_new_surface: 30
+
+# Presupuesto máximo de evals en USD por semana (ARCHITECTURE.md §8.1).
+eval_budget_usd: 2.0

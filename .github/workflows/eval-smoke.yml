@@ -1,0 +1,17 @@
+name: content-ray
+'on':
+  pull_request: null
+  push:
+    branches:
+    - main
+jobs:
+  content-ray:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: core en path editable (mismo layout local)
+      run: git clone --quiet --depth 1 --branch v0.10.0 https://github.com/binahco/llm-dev-core.git ../llm-dev-core
+    - uses: astral-sh/setup-uv@v6
+    - run: uv sync --frozen
+    - name: evals en verde (replay determinista, sin LLM — D4)
+      run: uv run pytest tests/test_replay.py -q
