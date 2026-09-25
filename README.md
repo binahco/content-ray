@@ -10,9 +10,10 @@ recibe el **índice** (anclas, rangos de línea, presupuesto de tokens) sanitiza
 ```bash
 uv sync
 uv run content-ray scan --dir ../llm-dev-core/docs/
-# ../llm-dev-core/docs: 9 archivos · 40 secciones · 42100 tokens aproximados
-# - 9 decisiones de arquitectura cubiertas, una por semana (ADR-0..ADR-9)
-# - parser-io documenta su propio contrato y su criterio de aceptación
+# llm-dev-core/docs: 12 archivos · 50 secciones · 9799 tokens aproximados
+# - 12 ADRs de contratos core (stack a parser-io) con acuerdos de aceptación semanales
+# - el 0001 (llm-client-contract) es el ADR más extenso y define el contrato público sem-2
+# Los números (archivos/secciones/tokens) varían: el corpus crece cada semana.
 uv run content-ray sample --sample ../llm-dev-core/docs/decisions/0009-parser-io-contract.md:2
 # Contrato mínimo — parser-io  (L1-L6)
 # - **Fecha:** 2026-10-01
@@ -49,6 +50,12 @@ el mismo corpus del mismo día no re-relee ni re-paga.
 | `secure-base` | el contenido externo se redacta antes de que cruce al proveedor |
 | `cache-ratelimit` | caché TTL + token bucket por delante del proveedor |
 | `ci-pack` | lints del audit y workflow `eval-smoke.yml` |
+
+## Calidad
+
+- Los fixtures del dataset (`evals/content-scan.jsonl`) usan un corpus congelado
+  (`files: 9`) distinto del real: el criterio es `schema_match` (D3), por lo que el
+  número no se re-valida contra el corpus vivo — se congela a propósito.
 
 ## Limitaciones
 
