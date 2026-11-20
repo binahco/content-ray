@@ -111,3 +111,36 @@ def test_el_judge_evoluciona_el_dataset_completo() -> None:
     out = run_evalset(dataset, judge_for(client), mode="full", threshold=1.0)
     assert out.total == 3
     assert out.passed == 3
+
+# --- F2.1: el sentinel `line_start == 0` (documento sin heading) queda cubierto ---
+
+
+def test_panel_de_documento_sin_heading_no_muestra_L0(tmp_path: Path) -> None:
+    """ADR-9 §2: `line_start == 0` significa "sin heading"; renderizar L0 sería mentira."""
+    doc = tmp_path / "plano.md"
+    doc.write_text("primera linea\nsegunda linea\ntercera linea\n")
+    parsed = parse(doc)
+    assert [s.line_start for s in parsed.sections] == [0], "precondición: el sentinel está activo"
+
+    panel = panel_for(parsed)
+    assert "L0" not in panel, panel
+    assert "(L1-L3)" in panel, panel
+
+
+def test_sample_de_linea_1_encuentra_la_seccion_implicita(tmp_path: Path) -> None:
+    """`--sample doc:1` debe encontrar la sección aunque su rango empiece en 0."""
+    doc = tmp_path / "plano.md"
+    doc.write_text("primera linea\nsegunda linea\n")
+    parsed = parse(doc)
+    wanted = 1
+    hit = next((s for s in parsed.sections if s.line_start <= wanted <= s.line_end), None)
+    assert hit is not None, "la línea 1 debe resolver a la sección implícita"
+    assert "primera linea" in hit.body
+
+
+def test_documento_con_heading_sigue_reportando_su_rango_real(tmp_path: Path) -> None:
+    """El cambio del panel no toca los documentos que sí tienen heading."""
+    doc = tmp_path / "con.md"
+    doc.write_text("# T\n\n## Seccion\n\ncuerpo\n")
+    panel = panel_for(parse(doc))
+    assert "(L3-L5)" in panel, panel

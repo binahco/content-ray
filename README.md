@@ -11,7 +11,7 @@ recibe el **índice** (anclas, rangos de línea, presupuesto de tokens) sanitiza
 uv sync
 uv run content-ray scan --dir ../llm-dev-core/docs/
 # llm-dev-core/docs: 12 archivos · 50 secciones · 9799 tokens aproximados
-# - 12 ADRs de contratos core (stack a parser-io) con acuerdos de aceptación semanales
+# - Los ADRs de contratos core (el conteo cambia: `ls ../llm-dev-core/docs/decisions/*.md | wc -l`) con acuerdos de aceptación semanales
 # - el 0001 (llm-client-contract) es el ADR más extenso y define el contrato público sem-2
 # Los números (archivos/secciones/tokens) varían: el corpus crece cada semana.
 uv run content-ray sample --sample ../llm-dev-core/docs/decisions/0009-parser-io-contract.md:2

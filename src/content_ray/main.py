@@ -85,10 +85,16 @@ def build_client(inner_provider, *, clock=None, span_file=None) -> dict:
 
 
 def panel_for(doc: ParsedDocument) -> str:
-    """Índice del documento: secciones con anchor/range/tokens + resumen de tablas."""
+    """Índice del documento: secciones con anchor/range/tokens + resumen de tablas.
+
+    `line_start == 0` es la señal de `parser-io` de que el documento no tiene heading
+    y que `body` arranca en la línea 1 (ADR-9 §2). Renderizar `L0` sería mentira: la
+    línea 0 no existe en un archivo, así que se muestra el rango real.
+    """
     lines = [f"- {doc.source} [{doc.format}] {doc.approx_tokens} tokens"]
     for section in doc.sections:
-        lines.append(f"    {section.anchor} (L{section.line_start}-L{section.line_end}) ~{section.body_tokens} tok")
+        inicio = max(1, section.line_start)
+        lines.append(f"    {section.anchor} (L{inicio}-L{section.line_end}) ~{section.body_tokens} tok")
     if doc.tables:
         lines.append(f"    → {len(doc.tables)} tablas ({sum(len(t.rows) for t in doc.tables)} filas)")
     return "\n".join(lines)
